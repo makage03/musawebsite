@@ -50,26 +50,15 @@
             border-radius: 30% 70% 70% 30% / 50% 60% 40% 50%;
         }
         .quote-marquee {
-            animation: quote-marquee 8s linear infinite;
+            animation: quote-marquee 30s linear infinite;
         }
         @keyframes quote-marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        .quote-track {
-            width: max-content;
-            display: flex;
-        }
         .footer-panel-open {
-            opacity: 1 !important;
-            pointer-events: auto !important;
-        }
-        .footer-panel-body {
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        .footer-panel-visible {
-            transform: translateY(0) !important;
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -132,7 +121,7 @@
   <img
   alt="Gourmet Avocado Toast"
   class="w-full aspect-square object-cover scale-60 organic-mask"
-  src="https://iftimie2002.github.io/musawebsite/imgmusa/bolo_laranja.webp"
+  src="https://iftimie2002.github.io/musawebsite/imgmusa/frutosvermelhos.png"
 />
 <div class="absolute bottom-12 -right-8 bg-primary text-white p-6 rounded-3xl shadow-xl hidden md:block max-w-[180px]">
 <p class="font-display italic text-lg leading-snug">"Literally the best Brunch in town."</p>
@@ -145,32 +134,22 @@
 <section class="py-10 bg-background-light dark:bg-background-dark">
 <div class="max-w-7xl mx-auto px-6">
 <div class="overflow-hidden rounded-large border border-primary/10 bg-white/60 dark:bg-slate-900/60 backdrop-blur">
-<div class="flex items-center gap-10 whitespace-nowrap py-6 quote-marquee quote-track">
-<div class="flex items-center gap-10 pr-12">
+<div class="flex items-center gap-10 whitespace-nowrap py-6 quote-marquee">
+<div class="flex items-center gap-10 pr-10">
 <span class="font-display text-2xl md:text-3xl italic text-primary">"Best Bruschetta in Carvoeiro"</span>
-<span class="font-sans text-base md:text-lg uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Pet Friendly</span>
+<span class="font-sans text-lg md:text-xl uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Pet Friendly</span>
 <span class="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Family Owned</span>
 <span class="font-sans text-base md:text-lg font-light lowercase text-primary">since 2019</span>
 <span class="font-display text-xl md:text-2xl italic text-slate-700 dark:text-slate-200">"Slow mornings, fast smiles"</span>
 <span class="font-sans text-2xl md:text-3xl font-semibold text-primary">Brunch Bliss</span>
-<span class="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Locally Sourced</span>
-<span class="font-sans text-base md:text-lg tracking-[0.25em] uppercase text-primary">Terrace Vibes</span>
-<span class="font-display text-xl md:text-2xl italic text-primary">"Sunny seaside brunch"</span>
-<span class="font-sans text-lg md:text-xl font-semibold text-slate-700 dark:text-slate-200">Fresh Juices</span>
-<span class="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Walk-ins Welcome</span>
 </div>
-<div class="flex items-center gap-10 pr-12">
+<div class="flex items-center gap-10 pr-10">
 <span class="font-display text-2xl md:text-3xl italic text-primary">"Best Bruschetta in Carvoeiro"</span>
-<span class="font-sans text-base md:text-lg uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Pet Friendly</span>
+<span class="font-sans text-lg md:text-xl uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Pet Friendly</span>
 <span class="font-display text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Family Owned</span>
 <span class="font-sans text-base md:text-lg font-light lowercase text-primary">since 2019</span>
 <span class="font-display text-xl md:text-2xl italic text-slate-700 dark:text-slate-200">"Slow mornings, fast smiles"</span>
 <span class="font-sans text-2xl md:text-3xl font-semibold text-primary">Brunch Bliss</span>
-<span class="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Locally Sourced</span>
-<span class="font-sans text-base md:text-lg tracking-[0.25em] uppercase text-primary">Terrace Vibes</span>
-<span class="font-display text-xl md:text-2xl italic text-primary">"Sunny seaside brunch"</span>
-<span class="font-sans text-lg md:text-xl font-semibold text-slate-700 dark:text-slate-200">Fresh Juices</span>
-<span class="font-display text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Walk-ins Welcome</span>
 </div>
 </div>
 </div>
@@ -322,7 +301,7 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
 </div>
 </footer>
 <div class="fixed inset-0 bg-slate-900/40 opacity-0 pointer-events-none transition-opacity duration-300 flex items-end justify-center z-[60]" data-panel-overlay>
-<div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-[2.5rem] p-8 footer-panel-body" data-panel-body>
+<div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-[2.5rem] p-8 translate-y-full transition-transform duration-300" data-panel-body>
 <div class="flex items-center justify-between mb-6">
 <h3 class="font-display text-2xl md:text-3xl font-bold" data-panel-title></h3>
 <button class="text-slate-500 hover:text-primary transition-colors" data-panel-close type="button">
@@ -341,72 +320,65 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
             animation: spin-slow 15s linear infinite;
         }
     </style>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const footerOverlay = document.querySelector("[data-panel-overlay]");
-        const panelBody = document.querySelector("[data-panel-body]");
-        const panelTitle = document.querySelector("[data-panel-title]");
-        const panelContent = document.querySelector("[data-panel-content]");
-        const panelClose = document.querySelector("[data-panel-close]");
-        const panelText = {
-          privacy: {
-            title: "Privacy Policy",
-            body: `
-              <p>We only collect the essentials needed to respond to reservations and inquiries. Your information is never sold or shared with third parties.</p>
-              <p>Any contact details you provide are used exclusively to confirm bookings, share updates, and improve your Musa experience.</p>
-            `,
-          },
-          terms: {
-            title: "Terms of Service",
-            body: `
-              <p>By visiting Musa, you agree to respectful, family-friendly conduct and to follow staff guidance for seating and service flow.</p>
-              <p>Reservations are held for 15 minutes. Please call ahead if you need to adjust your booking time.</p>
-            `,
-          },
-        };
+<script>
+      const footerOverlay = document.querySelector("[data-panel-overlay]");
+      const panelBody = document.querySelector("[data-panel-body]");
+      const panelTitle = document.querySelector("[data-panel-title]");
+      const panelContent = document.querySelector("[data-panel-content]");
+      const panelClose = document.querySelector("[data-panel-close]");
+      const panelText = {
+        privacy: {
+          title: "Privacy Policy",
+          body: `
+            <p>We only collect the essentials needed to respond to reservations and inquiries. Your information is never sold or shared with third parties.</p>
+            <p>Any contact details you provide are used exclusively to confirm bookings, share updates, and improve your Musa experience.</p>
+          `,
+        },
+        terms: {
+          title: "Terms of Service",
+          body: `
+            <p>By visiting Musa, you agree to respectful, family-friendly conduct and to follow staff guidance for seating and service flow.</p>
+            <p>Reservations are held for 15 minutes. Please call ahead if you need to adjust your booking time.</p>
+          `,
+        },
+      };
 
-        const openPanel = (key) => {
-          const content = panelText[key];
-          if (!content || !footerOverlay || !panelBody) return;
-          panelTitle.textContent = content.title;
-          panelContent.innerHTML = content.body;
-          footerOverlay.classList.add("footer-panel-open");
-          panelBody.classList.add("footer-panel-visible");
-        };
+      const openPanel = (key) => {
+        const content = panelText[key];
+        if (!content) return;
+        panelTitle.textContent = content.title;
+        panelContent.innerHTML = content.body;
+        footerOverlay.classList.add("footer-panel-open");
+        panelBody.classList.remove("translate-y-full");
+        panelBody.classList.add("translate-y-0");
+      };
 
-        const closePanel = () => {
-          if (!footerOverlay || !panelBody) return;
-          panelBody.classList.remove("footer-panel-visible");
-          footerOverlay.classList.remove("footer-panel-open");
-        };
+      const closePanel = () => {
+        panelBody.classList.remove("translate-y-0");
+        panelBody.classList.add("translate-y-full");
+        footerOverlay.classList.remove("footer-panel-open");
+      };
 
-        document.querySelectorAll("[data-panel]").forEach((button) => {
-          button.addEventListener("click", () => openPanel(button.dataset.panel));
-        });
+      document.querySelectorAll("[data-panel]").forEach((button) => {
+        button.addEventListener("click", () => openPanel(button.dataset.panel));
+      });
 
-        if (footerOverlay && panelBody) {
-          footerOverlay.addEventListener("click", (event) => {
-            if (!panelBody.contains(event.target)) {
-              closePanel();
-            }
-          });
+      footerOverlay.addEventListener("click", (event) => {
+        if (!panelBody.contains(event.target)) {
+          closePanel();
         }
+      });
 
-        if (panelClose) {
-          panelClose.addEventListener("click", closePanel);
-        }
+      panelClose.addEventListener("click", closePanel);
 
-        let touchStartY = 0;
-        if (panelBody) {
-          panelBody.addEventListener("touchstart", (event) => {
-            touchStartY = event.touches[0].clientY;
-          });
-          panelBody.addEventListener("touchend", (event) => {
-            const touchEndY = event.changedTouches[0].clientY;
-            if (touchEndY - touchStartY > 120) {
-              closePanel();
-            }
-          });
+      let touchStartY = 0;
+      panelBody.addEventListener("touchstart", (event) => {
+        touchStartY = event.touches[0].clientY;
+      });
+      panelBody.addEventListener("touchend", (event) => {
+        const touchEndY = event.changedTouches[0].clientY;
+        if (touchEndY - touchStartY > 120) {
+          closePanel();
         }
       });
     </script>
