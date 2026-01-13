@@ -341,21 +341,222 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
       const panelContent = document.querySelector("[data-panel-content]");
       const panelClose = document.querySelector("[data-panel-close]");
       const panelText = {
-        privacy: {
-          title: "Privacy Policy",
-          body: `
-            <p>We only collect the essentials needed to respond to reservations and inquiries. Your information is never sold or shared with third parties.</p>
-            <p>Any contact details you provide are used exclusively to confirm bookings, share updates, and improve your Musa experience.</p>
-          `,
-        },
+  privacy: {
+    title: "Privacy Policy",
+    body: `
+      <p><strong>Restaurant Musa</strong><br>
+      <strong>Last updated:</strong> January 12, 2026</p>
+
+      <p>
+        Restaurant Musa is committed to protecting the privacy and personal data of its customers,
+        website visitors, and other data subjects, in full compliance with Regulation (EU) 2016/679
+        (GDPR) and all other applicable data protection legislation.
+      </p>
+
+      <p>
+        This Privacy Policy explains who we are, which personal data we collect, how we process it,
+        with whom we share it, how long we retain it, and which rights you have as a data subject.
+      </p>
+
+      <h3>1. Data Controller</h3>
+      <p>
+        <strong>Business name:</strong> Tania Teixeira Gravito Vala<br>
+        <strong>Tax ID (NIF):</strong> 224273140<br>
+        <strong>Registered address:</strong> Rua do Barranco, Loja I, 8400-500 Lagoa-Carvoeiro<br>
+        <strong>Contact:</strong> +351 933 291 105
+      </p>
+
+      <h3>2. Personal Data We Collect</h3>
+      <ul>
+        <li><strong>Identification and contact data:</strong> first name, last name, phone number, email address</li>
+        <li><strong>Reservation data:</strong> date, time, number of guests, special requests (e.g. allergies, birthdays, when voluntarily provided)</li>
+        <li><strong>Payment data:</strong> strictly necessary data processed by PCI-DSS certified providers (we do not store full card details)</li>
+        <li><strong>Browsing data:</strong> IP address, device type, browser, pages visited (via cookies)</li>
+        <li><strong>Other data:</strong> information voluntarily provided (comments, suggestions, event participation)</li>
+      </ul>
+
+      <h3>3. Purposes and Legal Basis</h3>
+      <ul>
+        <li><strong>Table reservations:</strong> performance of a contract (mandatory)</li>
+        <li><strong>Take-away / delivery orders:</strong> performance of a contract (mandatory)</li>
+        <li><strong>Contact requests:</strong> legitimate interest or consent</li>
+        <li><strong>Marketing communications:</strong> consent</li>
+        <li><strong>Legal obligations (e.g. invoicing):</strong> legal obligation</li>
+        <li><strong>Website improvement & analytics:</strong> legitimate interest</li>
+        <li><strong>Security and fraud prevention:</strong> legitimate interest</li>
+      </ul>
+
+      <h3>4. Data Retention</h3>
+      <ul>
+        <li><strong>Reservation data:</strong> up to 30 days after the reservation date</li>
+        <li><strong>Newsletter data:</strong> until consent is withdrawn</li>
+        <li><strong>Invoicing data:</strong> 10 years</li>
+        <li><strong>Browsing data:</strong> in accordance with the Cookie Policy (up to 13 months)</li>
+      </ul>
+
+      <h3>5. Data Sharing</h3>
+      <p>
+        Personal data may be shared with judicial, tax, or regulatory authorities when legally required.
+        We do not sell or share personal data with third parties for direct marketing purposes.
+      </p>
+
+      <h3>6. Your Rights</h3>
+      <ul>
+        <li>Right of access</li>
+        <li>Right to rectification</li>
+        <li>Right to erasure (“right to be forgotten”)</li>
+        <li>Right to restriction of processing</li>
+        <li>Right to data portability</li>
+        <li>Right to object to processing</li>
+        <li>Right to withdraw consent</li>
+        <li>Right to lodge a complaint with the CNPD (www.cnpd.pt)</li>
+      </ul>
+
+      <p>
+        To exercise your rights, contact us at <strong>+351 933 291 105</strong>.
+        We will respond within 30 days, except in cases of particular complexity.
+      </p>
+
+      <h3>7. Security</h3>
+      <p>
+        We apply appropriate technical and organisational measures to protect personal data against
+        loss, misuse, alteration, or unauthorised access.
+      </p>
+
+      <h3>8. Policy Updates</h3>
+      <p>
+        This Privacy Policy may be updated periodically. The latest version will always be available
+        on this page with the corresponding update date.
+      </p>
+
+      <h3>9. Contact</h3>
+      <p>
+        <strong>Address:</strong> Rua do Barranco, Loja I, 8400-500 Lagoa-Carvoeiro
+      </p>
+
+      <p>
+        Thank you for trusting Restaurant Musa.<br>
+        Your privacy is important to us.
+      </p>
+    `,
+  },
+};
         terms: {
-          title: "Terms of Service",
-          body: `
-            <p>By visiting Musa, you agree to respectful, family-friendly conduct and to follow staff guidance for seating and service flow.</p>
-            <p>Reservations are held for 15 minutes. Please call ahead if you need to adjust your booking time.</p>
-          `,
-        },
-      };
+  title: "Terms of Service",
+  body: `
+    <p><strong>Restaurant Musa</strong><br>
+    <strong>Last updated:</strong> January 12, 2026</p>
+
+    <p>
+      Welcome to the official website of Restaurant Musa (hereinafter referred to as the
+      “Website”), accessible at www.musa-restaurante.pt (or any domain that may be used).
+    </p>
+
+    <p>
+      By accessing and using this Website, you fully and unreservedly accept these Terms
+      and Conditions of Use. If you do not agree with any of the terms set out below,
+      please do not use the Website.
+    </p>
+
+    <h3>1. Responsible Entity</h3>
+    <p>
+      <strong>Business name:</strong> Tania Teixeira Gravito Vala<br>
+      <strong>Tax ID (NIF):</strong> 224273140<br>
+      <strong>Address:</strong> Rua do Barranco, Loja I, 8400-500 Lagoa-Carvoeiro<br>
+      <strong>Contact:</strong> +351 933 291 105
+    </p>
+
+    <h3>2. Purpose of the Website</h3>
+    <p>The Website is primarily intended to:</p>
+    <ul>
+      <li>Present Restaurant Musa, its history, team, philosophy, and space</li>
+      <li>Provide information about the menu, opening hours, and contacts</li>
+      <li>Allow table reservations (when available)</li>
+      <li>Occasionally promote events, offers, and news</li>
+    </ul>
+
+    <h3>3. Use of the Website</h3>
+    <p>
+      Users agree to use the Website lawfully, responsibly, honestly, and in good faith.
+    </p>
+    <p>It is strictly prohibited to:</p>
+    <ul>
+      <li>Use the Website for illegal purposes or in violation of third-party rights</li>
+      <li>Introduce or spread viruses or any other malicious code</li>
+      <li>Attempt unauthorised access to restricted areas of the Website</li>
+      <li>Carry out reverse engineering, decompilation, or attempts to discover source code</li>
+      <li>Reproduce, distribute, or commercially exploit content without prior authorisation</li>
+    </ul>
+
+    <h3>4. Table Reservations (when applicable)</h3>
+    <ul>
+      <li>Reservations made through the Website are considered reservation requests and do not constitute a binding contract</li>
+      <li>Restaurant Musa reserves the right to confirm, modify, or cancel reservations based on actual availability or exceptional circumstances</li>
+      <li>No-shows without prior notice of at least 2–4 hours (as indicated at the time of booking) may result in a fee or restrictions on future reservations, in accordance with restaurant policy</li>
+      <li>Personal data collected during the reservation process is used exclusively for reservation management</li>
+    </ul>
+
+    <h3>5. Online Orders / Take-away / Delivery (if available)</h3>
+    <ul>
+      <li>Prices displayed include VAT at the legally applicable rate</li>
+      <li>Restaurant Musa reserves the right to change prices, products, and promotional conditions without prior notice</li>
+      <li>An order is only considered accepted after explicit confirmation by the Restaurant (via email, SMS, or WhatsApp)</li>
+      <li>If an item is unavailable, the customer will be contacted to propose alternatives or a refund</li>
+      <li>Estimated delivery times are indicative only</li>
+    </ul>
+
+    <h3>6. Intellectual Property</h3>
+    <p>
+      All content on the Website (texts, images, photographs, logo, design, software, etc.)
+      is the property of Restaurant Musa or is duly licensed.
+      Any reproduction, modification, transmission, publication, or other form of use,
+      in whole or in part, without prior written authorisation is strictly prohibited.
+    </p>
+
+    <h3>7. Liability</h3>
+    <p>Restaurant Musa shall not be liable for:</p>
+    <ul>
+      <li>Direct or indirect damages resulting from improper use of the Website</li>
+      <li>Temporary unavailability of the Website due to technical issues, maintenance, or force majeure</li>
+      <li>Content of external hyperlinks to third-party websites</li>
+    </ul>
+
+    <h3>8. Personal Data Processing</h3>
+    <p>
+      Personal data collected through the Website is processed in accordance with
+      Regulation (EU) 2016/679 (GDPR) and applicable legislation.
+    </p>
+    <p>
+      Please consult our <strong>Privacy Policy</strong> for detailed information regarding
+      the data controller, purposes, legal basis, retention periods, and data subject rights.
+    </p>
+
+    <h3>9. Changes to the Terms</h3>
+    <p>
+      Restaurant Musa reserves the right to amend these Terms and Conditions at any time,
+      without prior notice. Changes take effect upon publication on the Website.
+      Continued use of the Website after publication constitutes acceptance of the updated terms.
+    </p>
+
+    <h3>10. Applicable Law and Jurisdiction</h3>
+    <p>
+      These Terms and Conditions are governed by Portuguese law.
+      For the resolution of any disputes arising from the use of the Website,
+      the courts of the Lisbon District shall have exclusive jurisdiction,
+      with express waiver of any other.
+    </p>
+
+    <p>
+      <strong>Contact for matters related to these Terms and Conditions:</strong><br>
+      info@musa-restaurante.pt
+    </p>
+
+    <p>
+      Thank you for visiting Restaurant Musa.<br>
+      We look forward to welcoming you soon.
+    </p>
+  `,
+},
 
       const openPanel = (key) => {
         const content = panelText[key];
@@ -403,7 +604,7 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
   const originalGroup = marquee.querySelector("[data-marquee-group]");
   if (!track || !originalGroup) return;
 
-  const SPEED_PX_PER_SEC = 200;
+  const SPEED_PX_PER_SEC = 150;
 
   const build = () => {
     const template = originalGroup.cloneNode(true);
