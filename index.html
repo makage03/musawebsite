@@ -77,11 +77,14 @@
   /* panel slide + sizing */
   [data-panel-body]{
     transform: translateY(100%);
-    max-height: 75vh;              /* open to 3/4 screen */
-    transition: transform 300ms ease, max-height 250ms ease, border-radius 250ms ease;
+    max-height: 75vh;
+    transition:
+      transform 300ms ease,
+      max-height 650ms cubic-bezier(.22,1,.36,1),
+      border-radius 650ms cubic-bezier(.22,1,.36,1);
     display: flex;
     flex-direction: column;
-    overflow: hidden;             /* scrolling happens inside [data-panel-scroll] */
+    overflow: hidden;
     will-change: transform, max-height;
   }
   [data-panel-overlay].footer-panel-open [data-panel-body]{
@@ -263,12 +266,7 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
 <h2 class="font-display text-4xl md:text-5xl font-bold mb-8 leading-tight">Crafted with <span class="italic text-primary">Intention</span> and Love.</h2>
 <div class="space-y-6 text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
 <p>
-                        <strong>Musa</strong> <i>by Tania</i>©   is a family-run business, created with soul and a lot of love. Every dish is prepared and served with care, using fresh, made-to-order ingredients, because we believe great food starts with the love put into it. <br>The name Musa comes from the idea that we are all our own muses – a source of inspiration, creativity, and authenticity. That is what we want to share with those who visit us: a place that celebrates time, flavour, and the pleasure of being who we are.
-                    </p>
-<p>
-                        We partner with local farmers, use only organic produce, to ensure every sip and bite is exactly as it should be.
-                    </p>
-
+                        <strong>Musa</strong> <i>by Tania</i>©   is a family-run business, created with soul and a lot of love. Every dish is prepared and served with care, using fresh, made-to-order ingredients, because we believe great food starts with the love put into it. <br>The name Musa comes from the idea that we are all our own muses – a source of inspiration, creativity, and authenticity. That is what we want to share with those who visit us: a place that celebrates time, flavour, and the pleasure of being who we are.</p>
 </div>
 </div>
 </div>
@@ -593,102 +591,191 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
 `,
     },
   };
+// START OF PRIVACY AND TERMS PANEL SCRIPT SCROLLING GESTURES
+const openPanel = (key) => {
+  const content = panelText[key];
+  if (!content) return;
 
-  const openPanel = (key) => {
-    const content = panelText[key];
-    if (!content) return;
+  panelTitle.textContent = content.title;
+  panelContent.innerHTML = content.body;
 
-    panelTitle.textContent = content.title;
-    panelContent.innerHTML = content.body;
+  footerOverlay.classList.add("footer-panel-open");
+  panelBody.classList.remove("panel-expanded");
+  panelScroll.scrollTop = 0;
 
-    footerOverlay.classList.add("footer-panel-open");
-    panelBody.classList.remove("panel-expanded");
-    panelScroll.scrollTop = 0;
+  // optional but recommended: prevent page from scrolling behind
+  document.body.style.overflow = "hidden";
+};
 
-    // optional but recommended: prevent page from scrolling behind
-    document.body.style.overflow = "hidden";
-  };
+const closePanel = () => {
+  footerOverlay.classList.remove("footer-panel-open");
+  panelBody.classList.remove("panel-expanded");
+  document.body.style.overflow = "";
+};
 
-  const closePanel = () => {
-    footerOverlay.classList.remove("footer-panel-open");
-    panelBody.classList.remove("panel-expanded");
-    document.body.style.overflow = "";
-  };
+document.querySelectorAll("[data-panel]").forEach((button) => {
+  button.addEventListener("click", () => openPanel(button.dataset.panel));
+});
 
-  document.querySelectorAll("[data-panel]").forEach((button) => {
-    button.addEventListener("click", () => openPanel(button.dataset.panel));
-  });
+// click outside to close
+footerOverlay.addEventListener("click", (e) => {
+  if (e.target === footerOverlay) closePanel();
+});
 
-  // click outside to close
-  footerOverlay.addEventListener("click", (e) => {
-    if (e.target === footerOverlay) closePanel();
-  });
+// X button
+panelClose.addEventListener("click", closePanel);
 
-  // X button
-  panelClose.addEventListener("click", closePanel);
-
-  // expand to full height once user scrolls content
-  panelScroll.addEventListener("scroll", () => {
-    if (panelScroll.scrollTop > 12) panelBody.classList.add("panel-expanded");
+// expand to full height once user scrolls content (tune threshold)
+const EXPAND_AT = 200; // <-- change this
+panelScroll.addEventListener(
+  "scroll",
+  () => {
+    if (panelScroll.scrollTop > EXPAND_AT) panelBody.classList.add("panel-expanded");
     else panelBody.classList.remove("panel-expanded");
-  }, { passive: true });
+  },
+  { passive: true }
+);
 
-  // close by scrolling on the BACKGROUND (the visible top area)
-  footerOverlay.addEventListener("wheel", (e) => {
+// close by scrolling on the BACKGROUND (the visible top area)
+footerOverlay.addEventListener(
+  "wheel",
+  (e) => {
     if (!footerOverlay.classList.contains("footer-panel-open")) return;
     if (panelBody.contains(e.target)) return; // ignore scroll inside panel
     closePanel();
     window.scrollBy({ top: e.deltaY, left: 0, behavior: "auto" });
-  }, { passive: true });
+  },
+  { passive: true }
+);
 
-  // close by "dragging down" when you're at the top of the panel content (mobile + trackpad feel)
-  panelScroll.addEventListener("wheel", (e) => {
+// ===== INTENTIONAL CLOSE INSIDE PANEL (DESKTOP / TRACKPAD) =====
+// TUNE THESE:
+const WHEEL_CLOSE_DISTANCE = 220; // <-- increase = less sensitive
+const WHEEL_CLOSE_SINGLE = 90;    // <-- increase = less sensitive
+const WHEEL_RESET_GAP_MS = 140;
+
+let wheelPull = 0;
+let wheelLastTs = 0;
+
+panelScroll.addEventListener(
+  "wheel",
+  (e) => {
     if (!footerOverlay.classList.contains("footer-panel-open")) return;
-    if (panelScroll.scrollTop === 0 && e.deltaY < 0) closePanel();
-  }, { passive: true });
 
-  let startY = null;
+    // only allow close gesture when at (or near) the top of the panel content
+    if (panelScroll.scrollTop > 6) {
+      wheelPull = 0;
+      return;
+    }
 
-  // background swipe scroll => close + continue page scroll
-  footerOverlay.addEventListener("touchstart", (e) => {
+    // "pull down" at top = deltaY < 0
+    if (e.deltaY >= 0) {
+      wheelPull = 0;
+      return;
+    }
+
+    const now = performance.now();
+    if (now - wheelLastTs > WHEEL_RESET_GAP_MS) wheelPull = 0;
+    wheelLastTs = now;
+
+    const pull = -e.deltaY; // positive magnitude
+    wheelPull += pull;
+
+    if (pull >= WHEEL_CLOSE_SINGLE || wheelPull >= WHEEL_CLOSE_DISTANCE) {
+      closePanel();
+      wheelPull = 0;
+    }
+  },
+  { passive: true }
+);
+
+// ===== CLOSE BY DRAGGING DOWN ON THE BACKGROUND (VISIBLE TOP AREA) =====
+let startY = null;
+
+footerOverlay.addEventListener(
+  "touchstart",
+  (e) => {
     if (!footerOverlay.classList.contains("footer-panel-open")) return;
     if (e.target !== footerOverlay) return;
     startY = e.touches[0].clientY;
-  }, { passive: true });
+  },
+  { passive: true }
+);
 
-  footerOverlay.addEventListener("touchmove", (e) => {
+footerOverlay.addEventListener(
+  "touchmove",
+  (e) => {
     if (startY == null) return;
     if (e.target !== footerOverlay) return;
 
-    const dy = e.touches[0].clientY - startY; // + = finger down, - = finger up
+    const dy = e.touches[0].clientY - startY; // + = finger down
     if (Math.abs(dy) > 18) {
       closePanel();
-      window.scrollBy(0, -dy); // keeps the page scroll feeling natural
+      window.scrollBy(0, -dy);
       startY = null;
     }
-  }, { passive: true });
+  },
+  { passive: true }
+);
 
-  footerOverlay.addEventListener("touchend", () => { startY = null; }, { passive: true });
+footerOverlay.addEventListener(
+  "touchend",
+  () => {
+    startY = null;
+  },
+  { passive: true }
+);
 
-  // swipe down on panel content at top => close
-  let panelStartY = null;
-  panelScroll.addEventListener("touchstart", (e) => {
+// ===== INTENTIONAL CLOSE INSIDE PANEL (MOBILE TOUCH) =====
+// TUNE THESE:
+const TOUCH_CLOSE_DIST = 500;  // <-- increase = less sensitive
+const TOUCH_CLOSE_SPEED = 0.70; // <-- increase = requires faster flick
+const TOP_SLOP = 6;            // treat as "at top" when scrollTop <= this
+
+let touchStartY = null;
+let touchStartT = null;
+
+panelScroll.addEventListener(
+  "touchstart",
+  (e) => {
     if (!footerOverlay.classList.contains("footer-panel-open")) return;
-    panelStartY = e.touches[0].clientY;
-  }, { passive: true });
+    touchStartY = e.touches[0].clientY;
+    touchStartT = performance.now();
+  },
+  { passive: true }
+);
 
-  panelScroll.addEventListener("touchmove", (e) => {
-    if (panelStartY == null) return;
-    if (panelScroll.scrollTop !== 0) return;
+panelScroll.addEventListener(
+  "touchmove",
+  (e) => {
+    if (touchStartY == null) return;
+    if (panelScroll.scrollTop > TOP_SLOP) return;
 
-    const dy = e.touches[0].clientY - panelStartY; // pulling down
-    if (dy > 28) {
+    const y = e.touches[0].clientY;
+    const dy = y - touchStartY; // positive = pulling DOWN
+    if (dy <= 0) return;
+
+    const dt = performance.now() - touchStartT;
+    const v = dy / Math.max(dt, 1);
+
+    if (dy >= TOUCH_CLOSE_DIST && v >= TOUCH_CLOSE_SPEED) {
       closePanel();
-      panelStartY = null;
+      touchStartY = null;
+      touchStartT = null;
     }
-  }, { passive: true });
+  },
+  { passive: true }
+);
 
-  panelScroll.addEventListener("touchend", () => { panelStartY = null; }, { passive: true });
+panelScroll.addEventListener(
+  "touchend",
+  () => {
+    touchStartY = null;
+    touchStartT = null;
+  },
+  { passive: true }
+);
+// END OF PRIVACY AND TERMS PANEL SCRIPT SCROLLING GESTURES
 </script>
 <script>
 (() => {
