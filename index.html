@@ -59,28 +59,58 @@
 @keyframes marquee {
   to { transform: translateX(calc(-1 * var(--marquee-distance))); }
 }
+</style>
+<style>
+  /* overlay default (closed) */
+  [data-panel-overlay]{
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 300ms ease;
+  }
 
-        /* overlay default (closed) */
-[data-panel-overlay]{
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
+  /* overlay open */
+  [data-panel-overlay].footer-panel-open{
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
 
-/* overlay open */
-[data-panel-overlay].footer-panel-open{
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
+  /* panel slide + sizing */
+  [data-panel-body]{
+    transform: translateY(100%);
+    max-height: 75vh;              /* open to 3/4 screen */
+    transition: transform 300ms ease, max-height 250ms ease, border-radius 250ms ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;             /* scrolling happens inside [data-panel-scroll] */
+    will-change: transform, max-height;
+  }
+  [data-panel-overlay].footer-panel-open [data-panel-body]{
+    transform: translateY(0);
+  }
 
-/* panel slide */
-[data-panel-body]{
-  transform: translateY(100%);
-}
-[data-panel-overlay].footer-panel-open [data-panel-body]{
-  transform: translateY(0);
-}
+  /* expand to full height once user scrolls inside */
+  [data-panel-body].panel-expanded{
+    max-height: 100vh;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 
-    </style>
+  /* sticky header + scroll area */
+  [data-panel-header]{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: inherit;
+    backdrop-filter: blur(8px);
+  }
+
+  [data-panel-scroll]{
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+</style>
+
 </head>
 <body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-sans transition-colors duration-300">
 <svg class="absolute" height="0" width="0">
@@ -314,16 +344,22 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
 </div>
 </footer>
 <div class="fixed inset-0 bg-slate-900/40 transition-opacity duration-300 flex items-end justify-center z-[60]" data-panel-overlay>
-<div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-[2.5rem] p-8 transition-transform duration-300" data-panel-body>
+  <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-[2.5rem] transition-transform duration-300" data-panel-body>
 
-<div class="flex items-center justify-between mb-6">
-<h3 class="font-display text-2xl md:text-3xl font-bold" data-panel-title></h3>
-<button class="text-slate-500 hover:text-primary transition-colors" data-panel-close type="button">
-<span class="material-symbols-outlined">close</span>
-</button>
-</div>
-<div class="text-slate-600 dark:text-slate-400 leading-relaxed space-y-4 text-base md:text-lg" data-panel-content></div>
-</div>
+    <div class="px-8 pt-8 pb-4 border-b border-primary/10" data-panel-header>
+      <div class="flex items-center justify-between">
+        <h3 class="font-display text-2xl md:text-3xl font-bold" data-panel-title></h3>
+        <button class="text-slate-500 hover:text-primary transition-colors" data-panel-close type="button" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="px-8 pb-10 text-slate-600 dark:text-slate-400 leading-relaxed space-y-4 text-base md:text-lg" data-panel-scroll>
+      <div data-panel-content></div>
+    </div>
+
+  </div>
 </div>
 <style>
         @keyframes spin-slow {
@@ -335,16 +371,17 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
         }
     </style>
 <script>
-      const footerOverlay = document.querySelector("[data-panel-overlay]");
-      const panelBody = document.querySelector("[data-panel-body]");
-      const panelTitle = document.querySelector("[data-panel-title]");
-      const panelContent = document.querySelector("[data-panel-content]");
-      const panelClose = document.querySelector("[data-panel-close]");
-      const panelText = {
-  privacy: {
-    title: "Privacy Policy",
-    body: `
-      <p><strong>Restaurant Musa</strong><br>
+  const footerOverlay = document.querySelector("[data-panel-overlay]");
+  const panelBody = document.querySelector("[data-panel-body]");
+  const panelTitle = document.querySelector("[data-panel-title]");
+  const panelContent = document.querySelector("[data-panel-content]");
+  const panelClose = document.querySelector("[data-panel-close]");
+  const panelScroll = document.querySelector("[data-panel-scroll]");
+
+  const panelText = {
+    privacy: {
+      title: "Privacy Policy",
+      body: `<p><strong>Restaurant Musa</strong><br>
       <strong>Last updated:</strong> January 12, 2026</p>
 
       <p>
@@ -438,12 +475,11 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
         Thank you for trusting Restaurant Musa.<br>
         Your privacy is important to us.
       </p>
-    `,
-  },
-        terms: {
-  title: "Terms of Service",
-  body: `
-    <p><strong>Restaurant Musa</strong><br>
+`,
+    },
+    terms: {
+      title: "Terms of Service",
+      body: `<p><strong>Restaurant Musa</strong><br>
     <strong>Last updated:</strong> January 12, 2026</p>
 
     <p>
@@ -554,46 +590,106 @@ Bold espresso meets silky oat milk foam for a smooth, comforting, <strong>100% p
       Thank you for visiting Restaurant Musa.<br>
       We look forward to welcoming you soon.
     </p>
-  `,
-},
+`,
+    },
+  };
 
-      const openPanel = (key) => {
-        const content = panelText[key];
-        if (!content) return;
-        panelTitle.textContent = content.title;
-        panelContent.innerHTML = content.body;
-        footerOverlay.classList.add("footer-panel-open");
+  const openPanel = (key) => {
+    const content = panelText[key];
+    if (!content) return;
 
-      };
+    panelTitle.textContent = content.title;
+    panelContent.innerHTML = content.body;
 
-      const closePanel = () => {
+    footerOverlay.classList.add("footer-panel-open");
+    panelBody.classList.remove("panel-expanded");
+    panelScroll.scrollTop = 0;
 
-        footerOverlay.classList.remove("footer-panel-open");
-      };
+    // optional but recommended: prevent page from scrolling behind
+    document.body.style.overflow = "hidden";
+  };
 
-      document.querySelectorAll("[data-panel]").forEach((button) => {
-        button.addEventListener("click", () => openPanel(button.dataset.panel));
-      });
+  const closePanel = () => {
+    footerOverlay.classList.remove("footer-panel-open");
+    panelBody.classList.remove("panel-expanded");
+    document.body.style.overflow = "";
+  };
 
-      footerOverlay.addEventListener("click", (event) => {
-        if (!panelBody.contains(event.target)) {
-          closePanel();
-        }
-      });
+  document.querySelectorAll("[data-panel]").forEach((button) => {
+    button.addEventListener("click", () => openPanel(button.dataset.panel));
+  });
 
-      panelClose.addEventListener("click", closePanel);
+  // click outside to close
+  footerOverlay.addEventListener("click", (e) => {
+    if (e.target === footerOverlay) closePanel();
+  });
 
-      let touchStartY = 0;
-      panelBody.addEventListener("touchstart", (event) => {
-        touchStartY = event.touches[0].clientY;
-      });
-      panelBody.addEventListener("touchend", (event) => {
-        const touchEndY = event.changedTouches[0].clientY;
-        if (touchEndY - touchStartY > 120) {
-          closePanel();
-        }
-      });
-    </script>
+  // X button
+  panelClose.addEventListener("click", closePanel);
+
+  // expand to full height once user scrolls content
+  panelScroll.addEventListener("scroll", () => {
+    if (panelScroll.scrollTop > 12) panelBody.classList.add("panel-expanded");
+    else panelBody.classList.remove("panel-expanded");
+  }, { passive: true });
+
+  // close by scrolling on the BACKGROUND (the visible top area)
+  footerOverlay.addEventListener("wheel", (e) => {
+    if (!footerOverlay.classList.contains("footer-panel-open")) return;
+    if (panelBody.contains(e.target)) return; // ignore scroll inside panel
+    closePanel();
+    window.scrollBy({ top: e.deltaY, left: 0, behavior: "auto" });
+  }, { passive: true });
+
+  // close by "dragging down" when you're at the top of the panel content (mobile + trackpad feel)
+  panelScroll.addEventListener("wheel", (e) => {
+    if (!footerOverlay.classList.contains("footer-panel-open")) return;
+    if (panelScroll.scrollTop === 0 && e.deltaY < 0) closePanel();
+  }, { passive: true });
+
+  let startY = null;
+
+  // background swipe scroll => close + continue page scroll
+  footerOverlay.addEventListener("touchstart", (e) => {
+    if (!footerOverlay.classList.contains("footer-panel-open")) return;
+    if (e.target !== footerOverlay) return;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  footerOverlay.addEventListener("touchmove", (e) => {
+    if (startY == null) return;
+    if (e.target !== footerOverlay) return;
+
+    const dy = e.touches[0].clientY - startY; // + = finger down, - = finger up
+    if (Math.abs(dy) > 18) {
+      closePanel();
+      window.scrollBy(0, -dy); // keeps the page scroll feeling natural
+      startY = null;
+    }
+  }, { passive: true });
+
+  footerOverlay.addEventListener("touchend", () => { startY = null; }, { passive: true });
+
+  // swipe down on panel content at top => close
+  let panelStartY = null;
+  panelScroll.addEventListener("touchstart", (e) => {
+    if (!footerOverlay.classList.contains("footer-panel-open")) return;
+    panelStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  panelScroll.addEventListener("touchmove", (e) => {
+    if (panelStartY == null) return;
+    if (panelScroll.scrollTop !== 0) return;
+
+    const dy = e.touches[0].clientY - panelStartY; // pulling down
+    if (dy > 28) {
+      closePanel();
+      panelStartY = null;
+    }
+  }, { passive: true });
+
+  panelScroll.addEventListener("touchend", () => { panelStartY = null; }, { passive: true });
+</script>
 <script>
 (() => {
   const marquee = document.querySelector("[data-marquee]");
