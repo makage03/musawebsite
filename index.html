@@ -15,9 +15,9 @@
           extend: {
             colors: {
               primary: "#E97B3C",
-              "background-light": "#FFFBF2",
+              "background-light": "#9D9F85",
               "background-dark": "#1A1614",
-              "accent-cream": "#F9F1DC",
+              "accent-cream": "#9D9F85",
             },
             fontFamily: {
               display: ["'Playfair Display'", "serif"],
@@ -53,11 +53,11 @@
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: marquee linear infinite;
+  animation: none;
 }
 
 @keyframes marquee {
-  to { transform: translateX(calc(-1 * var(--marquee-distance))); }
+  to { transform: translate3d(calc(-1 * var(--marquee-distance, 0px)), 0, 0); }
 }
 </style>
 <style>
@@ -787,43 +787,66 @@ panelScroll.addEventListener(
   if (!track || !originalGroup) return;
 
   const SPEED_PX_PER_SEC = 150;
+  let rafId = null;
+
+  const restartAnimation = (seconds) => {
+    // hard restart (Safari needs this)
+    track.style.animation = "none";
+    track.offsetHeight; // force reflow
+    track.style.animation = `marquee ${seconds}s linear infinite`;
+  };
+const template = originalGroup.cloneNode(true);
 
   const build = () => {
-    const template = originalGroup.cloneNode(true);
+  track.innerHTML = "";
 
-    track.innerHTML = "";
+  const g1 = template.cloneNode(true);
+  track.appendChild(g1);
 
-    // Put g1 in the DOM first so scrollWidth is real
-    const g1 = template.cloneNode(true);
-    track.appendChild(g1);
+  const minWidth = marquee.clientWidth * 1.5;
+  const templateKids = Array.from(template.children);
 
-    // Extend g1 while it's in DOM (now scrollWidth updates correctly)
-    const minWidth = marquee.clientWidth * 1.5;
-    const templateKids = Array.from(template.children);
+  let guard = 0;
+  while (g1.scrollWidth < minWidth && guard++ < 200) {
+    templateKids.forEach((n) => g1.appendChild(n.cloneNode(true)));
+  }
 
-    while (g1.scrollWidth < minWidth) {
-      templateKids.forEach(n => g1.appendChild(n.cloneNode(true)));
-      // safety break (avoid any chance of infinite loop)
-      if (g1.children.length > 200) break;
-    }
+  const g2 = g1.cloneNode(true);
+  g2.setAttribute("aria-hidden", "true");
+  track.appendChild(g2);
 
-    // Clone for seamless loop
-    const g2 = g1.cloneNode(true);
-    g2.setAttribute("aria-hidden", "true");
-    track.appendChild(g2);
+  const distance = g1.scrollWidth;
+  if (!distance || distance < 10) {
+    rafId = requestAnimationFrame(build);
+    return;
+  }
 
-    const distance = g1.scrollWidth;
-    track.style.setProperty("--marquee-distance", distance + "px");
-    track.style.animationDuration = (distance / SPEED_PX_PER_SEC) + "s";
+  track.style.setProperty("--marquee-distance", distance + "px");
+  restartAnimation(distance / SPEED_PX_PER_SEC);
+};
+
+
+  const scheduleBuild = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => requestAnimationFrame(build));
   };
 
-  // Build after layout is ready
-  requestAnimationFrame(build);
+  // Run after fonts are ready (prevents late width changes / 0 width in Safari)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scheduleBuild);
+  } else {
+    scheduleBuild();
+  }
 
   let t;
   window.addEventListener("resize", () => {
     clearTimeout(t);
-    t = setTimeout(() => requestAnimationFrame(build), 120);
+    t = setTimeout(scheduleBuild, 120);
+  });
+
+  // Safari often “wakes up” animations on visibility changes; rebuild when returning
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) scheduleBuild();
   });
 })();
 </script>
